@@ -1,8 +1,8 @@
 package com.javanauta.usuario.business.converter;
 
-import com.javanauta.usuario.business.dtos.EnderecoDTO;
-import com.javanauta.usuario.business.dtos.TelefoneDTO;
-import com.javanauta.usuario.business.dtos.UsuarioDTO;
+import com.javanauta.usuario.business.dto.EnderecoDTO;
+import com.javanauta.usuario.business.dto.TelefoneDTO;
+import com.javanauta.usuario.business.dto.UsuarioDTO;
 import com.javanauta.usuario.infrastructure.entity.Endereco;
 import com.javanauta.usuario.infrastructure.entity.Telefone;
 import com.javanauta.usuario.infrastructure.entity.Usuario;
@@ -13,15 +13,17 @@ import java.util.List;
 @Component
 public class UsuarioConverter {
 
-    //Retorna de um DTO para uma entidade
+    //Retorna de um DTO para uma ENTIDADE
 
     public Usuario paraUsuario(UsuarioDTO usuarioDTO){
         return Usuario.builder()
                 .nome(usuarioDTO.getNome())
                 .email(usuarioDTO.getEmail())
                 .senha(usuarioDTO.getSenha())
-                .enderecos(paraListaEndereco(usuarioDTO.getEnderecos()))
-                .telefones(paraListaTelefone(usuarioDTO.getTelefones()))
+                .enderecos(usuarioDTO.getEnderecos() != null ?
+                        paraListaEndereco(usuarioDTO.getEnderecos()) : null)
+                .telefones(usuarioDTO.getTelefones() != null ?
+                        paraListaTelefone(usuarioDTO.getTelefones()) : null)
                 .build();
     }
 
@@ -51,15 +53,15 @@ public class UsuarioConverter {
                 .build();
     }
 
-    //Retorna de uma entidade para um DTO
+    //Retorna de uma ENTIDADE para um DTO
     public UsuarioDTO paraUsuarioDTO(Usuario usuario){
         return UsuarioDTO.builder()
                 .id(usuario.getId())
                 .nome(usuario.getNome())
                 .email(usuario.getEmail())
                 .senha(usuario.getSenha())
-                .enderecos(paraListaEnderecoDTO(usuario.getEnderecos()))
-                .telefones(paraListaTelefoneDTO(usuario.getTelefones()))
+                .enderecos(usuario.getEnderecos() != null ? paraListaEnderecoDTO(usuario.getEnderecos()) : null)
+                .telefones(usuario.getTelefones() != null ? paraListaTelefoneDTO(usuario.getTelefones()) : null)
                 .build();
     }
 
