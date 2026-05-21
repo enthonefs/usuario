@@ -1,9 +1,9 @@
 package com.javanauta.usuario.business;
 
 import com.javanauta.usuario.business.converter.UsuarioConverter;
-import com.javanauta.usuario.business.dtos.EnderecoDTO;
-import com.javanauta.usuario.business.dtos.TelefoneDTO;
-import com.javanauta.usuario.business.dtos.UsuarioDTO;
+import com.javanauta.usuario.business.dto.EnderecoDTO;
+import com.javanauta.usuario.business.dto.TelefoneDTO;
+import com.javanauta.usuario.business.dto.UsuarioDTO;
 import com.javanauta.usuario.infrastructure.entity.Endereco;
 import com.javanauta.usuario.infrastructure.entity.Telefone;
 import com.javanauta.usuario.infrastructure.entity.Usuario;

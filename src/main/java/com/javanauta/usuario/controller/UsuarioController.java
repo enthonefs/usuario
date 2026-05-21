@@ -1,9 +1,9 @@
 package com.javanauta.usuario.controller;
 
 import com.javanauta.usuario.business.UsuarioService;
-import com.javanauta.usuario.business.dtos.EnderecoDTO;
-import com.javanauta.usuario.business.dtos.TelefoneDTO;
-import com.javanauta.usuario.business.dtos.UsuarioDTO;
+import com.javanauta.usuario.business.dto.EnderecoDTO;
+import com.javanauta.usuario.business.dto.TelefoneDTO;
+import com.javanauta.usuario.business.dto.UsuarioDTO;
 import com.javanauta.usuario.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -57,7 +57,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/telefone")
-    public ResponseEntity<TelefoneDTO> atualizaDadosEndereco(@RequestBody TelefoneDTO dto,
+    public ResponseEntity<TelefoneDTO> atualizaDadosTelefone(@RequestBody TelefoneDTO dto,
                                                              @RequestParam("id") Long id){
         return ResponseEntity.ok(usuarioService.atualizaDadosTelefone(id, dto));
     }
