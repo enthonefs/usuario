@@ -73,7 +73,6 @@ public class UsuarioService {
                 () -> new ResourceNotFoundException("Email não localizado!"));
 
         Usuario usuario = usuarioConverter.updateUsuario(dto, usuarioEntity);
-        usuario.setSenha(passwordEncoder.encode(usuario.getPassword()));
 
         return usuarioConverter.paraUsuarioDTO(usuarioRepository.save(usuario));
 
