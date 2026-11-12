@@ -23,9 +23,9 @@ public class Endereco {
     private String complemento;
     @Column(name = "cidade", length = 150)
     private String cidade;
-    @Column(name = "estado", length = 2)
+    @Column(name = "estado", length = 5)
     private String estado;
-    @Column(name = "cep", length = 9)
+    @Column(name = "cep", length = 10)
     private String cep;
     @Column(name = "usuario_id")
     private Long usuario_id;

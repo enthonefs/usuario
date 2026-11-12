@@ -8,6 +8,7 @@ import com.javanauta.usuario.infrastructure.entity.Endereco;
 import com.javanauta.usuario.infrastructure.entity.Telefone;
 import com.javanauta.usuario.infrastructure.entity.Usuario;
 import com.javanauta.usuario.infrastructure.exceptions.ConflictException;
+import com.javanauta.usuario.infrastructure.exceptions.InvalidDataException;
 import com.javanauta.usuario.infrastructure.exceptions.ResourceNotFoundException;
 import com.javanauta.usuario.infrastructure.repository.EnderecoRepository;
 import com.javanauta.usuario.infrastructure.repository.TelefoneRepository;
@@ -29,10 +30,38 @@ public class UsuarioService {
     private final TelefoneRepository telefoneRepository;
 
     public UsuarioDTO salvarUsuario(UsuarioDTO usuarioDTO){
+        validarDados(usuarioDTO);
         emailExiste(usuarioDTO.getEmail());
         usuarioDTO.setSenha(passwordEncoder.encode(usuarioDTO.getSenha()));
         Usuario usuario = usuarioConverter.paraUsuario(usuarioDTO);
         return usuarioConverter.paraUsuarioDTO(usuarioRepository.save(usuario));
+    }
+
+    private void validarDados(UsuarioDTO dto) {
+        validarTamanho("nome", dto.getNome(), 100);
+        validarTamanho("email", dto.getEmail(), 100);
+        validarTamanho("senha", dto.getSenha(), 100);
+
+        if (dto.getEnderecos() != null) {
+            dto.getEnderecos().forEach(endereco -> {
+                validarTamanho("endereco.complemento", endereco.getComplemento(), 10);
+                validarTamanho("endereco.cidade", endereco.getCidade(), 150);
+                validarTamanho("endereco.estado", endereco.getEstado(), 5);
+                validarTamanho("endereco.cep", endereco.getCep(), 10);
+            });
+        }
+        if (dto.getTelefones() != null) {
+            dto.getTelefones().forEach(telefone -> {
+                validarTamanho("telefone.ddd", telefone.getDdd(), 5);
+                validarTamanho("telefone.numero", telefone.getNumero(), 20);
+            });
+        }
+    }
+
+    private void validarTamanho(String campo, String valor, int limite) {
+        if (valor != null && valor.length() > limite) {
+            throw new InvalidDataException(campo + " deve possuir no máximo " + limite + " caracteres.");
+        }
     }
 
     public void emailExiste(String email){
@@ -73,7 +102,6 @@ public class UsuarioService {
                 () -> new ResourceNotFoundException("Email não localizado!"));
 
         Usuario usuario = usuarioConverter.updateUsuario(dto, usuarioEntity);
-        usuario.setSenha(passwordEncoder.encode(usuario.getPassword()));
 
         return usuarioConverter.paraUsuarioDTO(usuarioRepository.save(usuario));
 
@@ -81,6 +109,7 @@ public class UsuarioService {
 
     public EnderecoDTO atualizaDadosEndereco(Long idEndereco, EnderecoDTO dto){
         try {
+            validarEndereco(dto);
             Endereco enderecoExistente = enderecoRepository.findById(idEndereco).orElseThrow(
                     () -> new ResourceNotFoundException("Id de Endereço indisponível! " + idEndereco));
 
@@ -95,6 +124,7 @@ public class UsuarioService {
 
     public TelefoneDTO atualizaDadosTelefone(Long idTelefone, TelefoneDTO dto){
         try {
+            validarTelefone(dto);
             Telefone telefoneExistente = telefoneRepository.findById(idTelefone).orElseThrow(
                     () -> new ResourceNotFoundException("Id de Telefone indisponível! " + idTelefone));
 
@@ -108,6 +138,7 @@ public class UsuarioService {
     }
 
     public EnderecoDTO cadastraEndereco(String token, EnderecoDTO dto){
+        validarEndereco(dto);
         String email = jwtUtil.extrairEmailToken(token.substring(7));
         Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(
                 () -> new ResourceNotFoundException("Email inválido! " + email));
@@ -117,6 +148,7 @@ public class UsuarioService {
     }
 
     public TelefoneDTO cadastraTelefone(String token, TelefoneDTO dto){
+        validarTelefone(dto);
         String email = jwtUtil.extrairEmailToken(token.substring(7));
         Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(
                 () -> new ResourceNotFoundException("Email inválido! " + email));
@@ -126,4 +158,17 @@ public class UsuarioService {
 
     }
 
+    private void validarEndereco(EnderecoDTO endereco) {
+        if (endereco == null) throw new InvalidDataException("endereco é obrigatório.");
+        validarTamanho("endereco.complemento", endereco.getComplemento(), 10);
+        validarTamanho("endereco.cidade", endereco.getCidade(), 150);
+        validarTamanho("endereco.estado", endereco.getEstado(), 5);
+        validarTamanho("endereco.cep", endereco.getCep(), 10);
+    }
+
+    private void validarTelefone(TelefoneDTO telefone) {
+        if (telefone == null) throw new InvalidDataException("telefone é obrigatório.");
+        validarTamanho("telefone.ddd", telefone.getDdd(), 5);
+        validarTamanho("telefone.numero", telefone.getNumero(), 20);
+    }
 }
