@@ -6,6 +6,7 @@ import com.javanauta.usuario.infrastructure.entity.Usuario;
 import com.javanauta.usuario.infrastructure.repository.EnderecoRepository;
 import com.javanauta.usuario.infrastructure.repository.TelefoneRepository;
 import com.javanauta.usuario.infrastructure.repository.UsuarioRepository;
+import com.javanauta.usuario.infrastructure.exceptions.InvalidDataException;
 import com.javanauta.usuario.infrastructure.security.JwtUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -131,5 +132,21 @@ class UsuarioServiceTest {
                 () -> usuarioService.buscarPorEmail("inexistente@email.com"));
 
         assertNotNull(exception.getMessage());
+    }
+
+    @Test
+    void deveRecusarTelefoneMaiorQueLimiteDoBancoAntesDePersistir() {
+        UsuarioDTO dto = UsuarioDTO.builder()
+                .nome("Ana")
+                .email("ana@email.com")
+                .senha("12345678")
+                .telefones(java.util.List.of(com.javanauta.usuario.business.dto.TelefoneDTO.builder()
+                        .ddd("81").numero("99999999999").build()))
+                .build();
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class,
+                () -> usuarioService.salvarUsuario(dto));
+
+        assertEquals("telefone.numero deve possuir no máximo 10 caracteres.", exception.getMessage());
     }
 }
