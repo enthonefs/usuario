@@ -141,12 +141,12 @@ class UsuarioServiceTest {
                 .email("ana@email.com")
                 .senha("12345678")
                 .telefones(java.util.List.of(com.javanauta.usuario.business.dto.TelefoneDTO.builder()
-                        .ddd("81").numero("99999999999").build()))
+                        .ddd("81").numero("999999999999999999999").build()))
                 .build();
 
         InvalidDataException exception = assertThrows(InvalidDataException.class,
                 () -> usuarioService.salvarUsuario(dto));
 
-        assertEquals("telefone.numero deve possuir no máximo 10 caracteres.", exception.getMessage());
+        assertEquals("telefone.numero deve possuir no máximo 20 caracteres.", exception.getMessage());
     }
 }
