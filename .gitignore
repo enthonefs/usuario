@@ -41,3 +41,6 @@ AGENTS.md
 
 ### Properties ###
 application-dev.properties
+
+### Variáveis ###
+.env
